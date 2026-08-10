@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import { formatDatetime } from "@probo/helpers";
 import {
   Breadcrumb,
   Button,
@@ -46,12 +47,21 @@ const createMutation = graphql`
           id
           name
           description
+          periodStart
+          periodEnd
           createdAt
         }
       }
     }
   }
 `;
+
+type FormData = {
+  name: string;
+  description: string;
+  periodStart: string;
+  periodEnd: string;
+};
 
 export function CreateRiskAnalysisDialog(props: {
   connectionId: string;
@@ -60,17 +70,24 @@ export function CreateRiskAnalysisDialog(props: {
   const organizationId = useOrganizationId();
   const dialogRef = useDialogRef();
   const [createRiskAnalysis, isCreating] = useMutation<CreateRiskAnalysisDialogCreateMutation>(createMutation);
-  const { register, handleSubmit, reset, formState } = useForm({
-    defaultValues: { name: "", description: "" },
+  const { register, handleSubmit, reset, formState } = useForm<FormData>({
+    defaultValues: {
+      name: "",
+      description: "",
+      periodStart: "",
+      periodEnd: "",
+    },
   });
 
-  const onSubmit = (data: { name: string; description: string }) => {
+  const onSubmit = (data: FormData) => {
     createRiskAnalysis({
       variables: {
         input: {
           organizationId,
           name: data.name,
           description: data.description || null,
+          periodStart: formatDatetime(data.periodStart) ?? null,
+          periodEnd: formatDatetime(data.periodEnd) ?? null,
         },
         connections: [props.connectionId],
       },
@@ -111,6 +128,24 @@ export function CreateRiskAnalysisDialog(props: {
             type="textarea"
             rows={3}
             placeholder={t("createRiskAnalysisDialog.placeholders.description")}
+          />
+          <Field
+            label={t("createRiskAnalysisDialog.fields.periodStart")}
+            {...register("periodStart")}
+            type="date"
+            error={formState.errors.periodStart?.message}
+          />
+          <Field
+            label={t("createRiskAnalysisDialog.fields.periodEnd")}
+            {...register("periodEnd", {
+              validate: (value, formValues) =>
+                !value
+                || !formValues.periodStart
+                || value >= formValues.periodStart
+                || t("createRiskAnalysisDialog.validation.periodEndBeforeStart"),
+            })}
+            type="date"
+            error={formState.errors.periodEnd?.message}
           />
         </DialogContent>
         <DialogFooter>

@@ -86,6 +86,8 @@ export async function execute(
 								id
 								name
 								description
+								periodStart
+								periodEnd
 								createdAt
 								updatedAt
 							}

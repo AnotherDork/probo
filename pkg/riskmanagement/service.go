@@ -50,12 +50,16 @@ type (
 		OrganizationID gid.GID
 		Name           string
 		Description    *string
+		PeriodStart    *time.Time
+		PeriodEnd      *time.Time
 	}
 
 	UpdateRiskAnalysisRequest struct {
 		ID          gid.GID
 		Name        *string
 		Description **string
+		PeriodStart *time.Time
+		PeriodEnd   *time.Time
 	}
 
 	CreateRiskAnalysisDiagramRequest struct {
@@ -160,6 +164,7 @@ func (r *CreateRiskAnalysisRequest) Validate() error {
 	v.Check(r.OrganizationID, "organization_id", validator.Required(), validator.GID(coredata.OrganizationEntityType))
 	v.Check(r.Name, "name", validator.Required(), validator.SafeTextNoNewLine(TitleMaxLength))
 	v.Check(r.Description, "description", validator.SafeText(ContentMaxLength))
+	validatePeriodRange(v, r.PeriodStart, r.PeriodEnd)
 
 	return v.Error()
 }
@@ -169,8 +174,28 @@ func (r *UpdateRiskAnalysisRequest) Validate() error {
 	v.Check(r.ID, "id", validator.Required(), validator.GID(coredata.RiskAnalysisEntityType))
 	v.Check(r.Name, "name", validator.SafeTextNoNewLine(TitleMaxLength))
 	v.Check(r.Description, "description", validator.SafeText(ContentMaxLength))
+	validatePeriodRange(v, r.PeriodStart, r.PeriodEnd)
 
 	return v.Error()
+}
+
+func validatePeriodRange(v *validator.Validator, periodStart, periodEnd *time.Time) {
+	if periodStart == nil || periodEnd == nil {
+		return
+	}
+
+	if periodEnd.Before(*periodStart) {
+		v.Check(
+			periodEnd,
+			"period_end",
+			func(any) *validator.ValidationError {
+				return &validator.ValidationError{
+					Code:    validator.ErrorCodeOutOfRange,
+					Message: fmt.Sprintf("must be on or after %s", periodStart.Format(time.DateOnly)),
+				}
+			},
+		)
+	}
 }
 
 func (r *CreateRiskAnalysisDiagramRequest) Validate() error {
@@ -340,6 +365,8 @@ func (s *Service) Create(ctx context.Context, scope coredata.Scoper, req CreateR
 		OrganizationID: req.OrganizationID,
 		Name:           req.Name,
 		Description:    req.Description,
+		PeriodStart:    req.PeriodStart,
+		PeriodEnd:      req.PeriodEnd,
 		CreatedAt:      now,
 		UpdatedAt:      now,
 	}
@@ -401,6 +428,21 @@ func (s *Service) Update(ctx context.Context, scope coredata.Scoper, req UpdateR
 
 			if req.Description != nil {
 				ra.Description = *req.Description
+			}
+
+			if req.PeriodStart != nil {
+				ra.PeriodStart = req.PeriodStart
+			}
+
+			if req.PeriodEnd != nil {
+				ra.PeriodEnd = req.PeriodEnd
+			}
+
+			v := validator.New()
+			validatePeriodRange(v, ra.PeriodStart, ra.PeriodEnd)
+
+			if err := v.Error(); err != nil {
+				return fmt.Errorf("invalid request: %w", err)
 			}
 
 			ra.UpdatedAt = time.Now()

@@ -4712,6 +4712,7 @@
     "columns": {
       "name": "Naam",
       "description": "Beschrijving",
+      "period": "Periode",
       "created": "Aangemaakt"
     }
   },
@@ -4803,10 +4804,15 @@
     },
     "fields": {
       "name": "Naam",
-      "description": "Beschrijving"
+      "description": "Beschrijving",
+      "periodStart": "Periode start",
+      "periodEnd": "Periode eind"
     },
     "validation": {
-      "nameRequired": "Dit veld is verplicht"
+      "nameRequired": "Dit veld is verplicht",
+      "periodStartRequired": "Dit veld is verplicht",
+      "periodEndRequired": "Dit veld is verplicht",
+      "periodEndBeforeStart": "Periode eind moet op of na periode start liggen"
     },
     "placeholders": {
       "name": "bijv. Platform Dreigingsmodel 2026",

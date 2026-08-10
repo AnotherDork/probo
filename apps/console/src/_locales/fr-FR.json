@@ -4761,6 +4761,7 @@
     "columns": {
       "name": "Nom",
       "description": "Description",
+      "period": "Période",
       "created": "Créé le"
     }
   },
@@ -4852,10 +4853,15 @@
     },
     "fields": {
       "name": "Nom",
-      "description": "Description"
+      "description": "Description",
+      "periodStart": "Début de période",
+      "periodEnd": "Fin de période"
     },
     "validation": {
-      "nameRequired": "Ce champ est requis"
+      "nameRequired": "Ce champ est requis",
+      "periodStartRequired": "Ce champ est requis",
+      "periodEndRequired": "Ce champ est requis",
+      "periodEndBeforeStart": "La fin de période doit être égale ou postérieure au début"
     },
     "placeholders": {
       "name": "ex. Modèle de menace de la plateforme 2026",

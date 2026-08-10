@@ -38,6 +38,8 @@ query($id: ID!) {
       id
       name
       description
+      periodStart
+      periodEnd
       createdAt
       updatedAt
     }
@@ -51,6 +53,8 @@ type viewResponse struct {
 		ID          string  `json:"id"`
 		Name        string  `json:"name"`
 		Description *string `json:"description"`
+		PeriodStart *string `json:"periodStart"`
+		PeriodEnd   *string `json:"periodEnd"`
 		CreatedAt   string  `json:"createdAt"`
 		UpdatedAt   string  `json:"updatedAt"`
 	} `json:"node"`
@@ -123,6 +127,14 @@ func NewCmdView(f *cmdutil.Factory) *cobra.Command {
 
 			if r.Description != nil && *r.Description != "" {
 				_, _ = fmt.Fprintf(out, "%s%s\n", label.Render("Description:"), *r.Description)
+			}
+
+			if r.PeriodStart != nil {
+				_, _ = fmt.Fprintf(out, "%s%s\n", label.Render("Period start:"), cmdutil.FormatTime(*r.PeriodStart))
+			}
+
+			if r.PeriodEnd != nil {
+				_, _ = fmt.Fprintf(out, "%s%s\n", label.Render("Period end:"), cmdutil.FormatTime(*r.PeriodEnd))
 			}
 
 			_, _ = fmt.Fprintln(out)

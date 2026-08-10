@@ -12742,6 +12742,18 @@ components:
           type:
             - string
             - "null"
+        period_start:
+          type:
+            - string
+            - "null"
+          format: date-time
+          description: Start of the analysis period
+        period_end:
+          type:
+            - string
+            - "null"
+          format: date-time
+          description: End of the analysis period
         created_at:
           type: string
           format: date-time
@@ -12987,6 +12999,14 @@ components:
         description:
           type: string
           description: Risk analysis description
+        period_start:
+          type: string
+          format: date-time
+          description: Start of the analysis period
+        period_end:
+          type: string
+          format: date-time
+          description: End of the analysis period
 
     AddRiskAnalysisOutput:
       type: object
@@ -13011,6 +13031,18 @@ components:
           type: ["string", "null"]
           description: Risk analysis description
           go.probo.inc/mcpgen/omittable: true
+        period_start:
+          type:
+            - string
+            - "null"
+          format: date-time
+          description: Start of the analysis period
+        period_end:
+          type:
+            - string
+            - "null"
+          format: date-time
+          description: End of the analysis period
 
     UpdateRiskAnalysisOutput:
       type: object

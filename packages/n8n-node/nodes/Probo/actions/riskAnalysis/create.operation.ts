@@ -70,6 +70,20 @@ export const description: INodeProperties[] = [
 				default: '',
 				description: 'The description of the risk analysis',
 			},
+			{
+				displayName: 'Period Start',
+				name: 'periodStart',
+				type: 'dateTime',
+				default: '',
+				description: 'Start of the analysis period',
+			},
+			{
+				displayName: 'Period End',
+				name: 'periodEnd',
+				type: 'dateTime',
+				default: '',
+				description: 'End of the analysis period',
+			},
 		],
 	},
 ];
@@ -82,6 +96,8 @@ export async function execute(
 	const name = this.getNodeParameter('name', itemIndex) as string;
 	const additionalFields = this.getNodeParameter('additionalFields', itemIndex, {}) as {
 		description?: string;
+		periodStart?: string;
+		periodEnd?: string;
 	};
 
 	const query = `
@@ -92,6 +108,8 @@ export async function execute(
 						id
 						name
 						description
+						periodStart
+						periodEnd
 						createdAt
 						updatedAt
 					}
@@ -105,6 +123,8 @@ export async function execute(
 		name,
 	};
 	if (additionalFields.description) input.description = additionalFields.description;
+	if (additionalFields.periodStart) input.periodStart = additionalFields.periodStart;
+	if (additionalFields.periodEnd) input.periodEnd = additionalFields.periodEnd;
 
 	const responseData = await proboApiRequest.call(this, query, { input });
 

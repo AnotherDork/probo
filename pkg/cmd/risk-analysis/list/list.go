@@ -41,6 +41,8 @@ query($id: ID!, $first: Int, $after: CursorKey, $orderBy: RiskAnalysisOrder) {
             id
             name
             description
+            periodStart
+            periodEnd
             createdAt
             updatedAt
           }
@@ -59,6 +61,8 @@ type riskAnalysis struct {
 	ID          string  `json:"id"`
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
+	PeriodStart *string `json:"periodStart"`
+	PeriodEnd   *string `json:"periodEnd"`
 	CreatedAt   string  `json:"createdAt"`
 	UpdatedAt   string  `json:"updatedAt"`
 }
@@ -175,15 +179,27 @@ func NewCmdList(f *cmdutil.Factory) *cobra.Command {
 					desc = *r.Description
 				}
 
+				periodStart := ""
+				if r.PeriodStart != nil {
+					periodStart = cmdutil.FormatTime(*r.PeriodStart)
+				}
+
+				periodEnd := ""
+				if r.PeriodEnd != nil {
+					periodEnd = cmdutil.FormatTime(*r.PeriodEnd)
+				}
+
 				rows = append(rows, []string{
 					r.ID,
 					r.Name,
 					desc,
+					periodStart,
+					periodEnd,
 					cmdutil.FormatTime(r.CreatedAt),
 				})
 			}
 
-			t := cmdutil.NewTable("ID", "NAME", "DESCRIPTION", "CREATED AT").Rows(rows...)
+			t := cmdutil.NewTable("ID", "NAME", "DESCRIPTION", "PERIOD START", "PERIOD END", "CREATED AT").Rows(rows...)
 
 			_, _ = fmt.Fprintln(f.IOStreams.Out, t)
 

@@ -6437,6 +6437,8 @@ func (r *Resolver) AddRiskAnalysisTool(ctx context.Context, req *mcp.CallToolReq
 		OrganizationID: input.OrganizationID,
 		Name:           input.Name,
 		Description:    input.Description,
+		PeriodStart:    input.PeriodStart,
+		PeriodEnd:      input.PeriodEnd,
 	})
 	if err != nil {
 		return nil, types.AddRiskAnalysisOutput{}, fmt.Errorf("failed to create risk analysis: %w", err)
@@ -6457,6 +6459,8 @@ func (r *Resolver) UpdateRiskAnalysisTool(ctx context.Context, req *mcp.CallTool
 		ID:          input.ID,
 		Name:        input.Name,
 		Description: UnwrapOmittable(input.Description),
+		PeriodStart: input.PeriodStart,
+		PeriodEnd:   input.PeriodEnd,
 	})
 	if err != nil {
 		return nil, types.UpdateRiskAnalysisOutput{}, fmt.Errorf("failed to update risk analysis: %w", err)
