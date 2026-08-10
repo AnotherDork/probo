@@ -144,6 +144,7 @@ const (
 	CompliancePortalThirdPartyEntityType             uint16 = 112
 	CompliancePortalDocumentEntityType               uint16 = 113
 	BusinessFunctionEntityType                       uint16 = 114
+	SlackIdentityBindingEntityType                   uint16 = 115
 )
 
 func NewEntityFromID(id gid.GID) (any, bool) {
@@ -360,6 +361,8 @@ func NewEntityFromID(id gid.GID) (any, bool) {
 		return &DevicePostureReport{ID: id}, true
 	case BusinessFunctionEntityType:
 		return &BusinessFunction{ID: id}, true
+	case SlackIdentityBindingEntityType:
+		return &SlackIdentityBinding{ID: id}, true
 	default:
 		return nil, false
 	}
