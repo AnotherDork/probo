@@ -67,6 +67,7 @@ type (
 	SCIMBridgeConfig           = probodconfig.SCIMBridgeConfig
 	ITAMConfig                 = probodconfig.ITAMConfig
 	SlackConfig                = probodconfig.SlackConfig
+	SlackbotConfig             = probodconfig.SlackbotConfig
 )
 
 const (

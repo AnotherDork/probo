@@ -787,6 +787,17 @@ func (impl *Implm) Run(
 		l.Named("itam"),
 	)
 
+	slackbotBindings := impl.buildSlackbotBindingService(pgClient, baseURL)
+	slackbotHandler, err := impl.buildSlackbotHandler(ctx, pgClient, slackbotBindings, l, tp, r)
+	if err != nil {
+		return fmt.Errorf("cannot build slackbot handler: %w", err)
+	}
+	if slackbotHandler != nil {
+		if err := slackbotHandler.ResumePending(ctx); err != nil {
+			return fmt.Errorf("cannot resume pending slackbot agents: %w", err)
+		}
+	}
+
 	serverHandler, err := server.NewServer(
 		server.Config{
 			AllowedOrigins:    impl.cfg.Api.Cors.AllowedOrigins,
@@ -808,6 +819,8 @@ func (impl *Implm) Run(
 			RiskManagement:    riskManagementService,
 			ITAM:              itamService,
 			Slack:             slackService,
+			SlackbotEvents:    slackbotHandler,
+			SlackbotBindings:  slackbotBindings,
 			ConnectorRegistry: defaultConnectorRegistry,
 			ProviderRegistry:  providerRegistry,
 			BaseURL:           baseURL,
